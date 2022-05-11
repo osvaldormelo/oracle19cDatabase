@@ -64,7 +64,25 @@ This repository shows how to build a image and deploy an Oracle database in Open
     ```
 
 7. Pushing the Image to a Repository
-    Now push to any image repository like dockerhub or a private image repository.
+    Now push to any image repository like dockerhub or a private image repository. Like this:
+    
+    Login into your private registry:
+    
+    ```bash
+    podman login <your registry name> --tls-verify=false
+    ```
+    Tag your local image to match with your registry:
+
+    ```bash
+    podman tag <your image id> <your registry name>/<your project name>/oracle19c:1.0.0
+    ```
+
+    Push your image on private repository:
+
+    ```bash
+    podman push <your registry name>/<your project name>/oracle19c:1.0.0 --tls-verify=false
+    ```
+
 
 8. Create the Password Secret Resource
     This is just a simple base64 password. Not truly secure but at least it will not be in the deployment configurations. Create a YAML file called oracle-db-secret.yml and add the following:
@@ -140,8 +158,40 @@ This repository shows how to build a image and deploy an Oracle database in Open
 10. Now apply by running:
 
     ```bash
-    oc apply -f database-deployment.yml -n <your namespace>
+    cd yaml-files
     ```
 
-Great. You have now created your first Oracle 19c database in Openshift. Stay tuned as ill either append to this article or write another one on Oracle 19c persistence with Openshift!
+    Create a service account for Oracle19c:
+    
+    ```bash
+    oc create sa oracle-sa
+    ```
+
+    Add policy to service account created:
+
+    ```bash
+    oc adm policy add-scc-to-user anyuid -z oracle-sa
+    ```
+
+    Create Deployment for Database:
+
+    ```bash
+    oc apply -f database-deployment.yml -n <your namespace>
+    ```
+    If you want, you can apply service account to deployment manually:
+    
+    ```bash
+    oc set serviceaccount deployment/oracle-19c oracle-sa
+    ```
+    Now finnaly, you will create a service to deployment with following command:
+
+    ```bash
+    oc apply -f service.yml -n <your namespace>
+    ```
+
+Great. You have now created your first Oracle 19c database in Openshift. 
+
+![](/images/2022-05-11-16-51-09.png)
+
+Stay tuned as ill either append to this repo or write another one on Oracle 19c persistence with Openshift!
 

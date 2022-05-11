@@ -15,12 +15,12 @@ spec:
     spec:
       containers:
       - name: oracle-19c
-        image: <your image creation location>
+        image: <your registry>/<your namespace>/oracle19c:1.0.0
         env:
         - name: ORACLE_SID
-          value: <your-sid>
+          value: <your SID>
         - name: ORACLE_PDB
-          value: <your-portable-db-name>
+          value: <your db name>
         - name: ORACLE_EDITION
           value: enterprise
         - name: ORACLE_PWD
@@ -40,3 +40,6 @@ spec:
           containerPort: 1521
         - name: em-port
           containerPort: 5500
+      serviceName: oracle19c
+      serviceAccountName: oracle-sa
+      serviceAccount: oracle-sa
