@@ -193,5 +193,5 @@ Great. You have now created your first Oracle 19c database in Openshift.
 
 ![](/images/2022-05-11-16-51-09.png)
 
-Stay tuned as ill either append to this repo or write another one on Oracle 19c persistence with Openshift!
+And I put the ymls of a persistent deploy in the yaml-files directory.
 
