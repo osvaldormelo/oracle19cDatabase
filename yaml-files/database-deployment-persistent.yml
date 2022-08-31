@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oracle-19c
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oracle-19c
+  template:
+    metadata:
+      labels:
+        app: oracle-19c
+        selector: oracle-19c
+    spec:
+      containers:
+      - name: oracle-19c
+        image: <your registry>/<your namespace>/oracle19c:1.0.0
+        env:
+        - name: ORACLE_SID
+          value: ABC
+        - name: ORACLE_PDB
+          value: ABCPDB1
+        - name: ORACLE_EDITION
+          value: enterprise
+        - name: ORACLE_PWD
+          valueFrom:
+            secretKeyRef:
+              name: oracledb-secret
+              key: oracleRootPassword
+        resources:
+          limits:
+            cpu: 4
+            memory: 5500Mi
+          requests:
+            cpu: 1
+            memory: 2000Mi
+        ports:
+        - name: main-port
+          containerPort: 1521
+        - name: em-port
+          containerPort: 5500
+        volumeMounts:
+          - mountPath: /opt/oracle/oradata
+            name: oracle-19c
+      securityContext:
+          fsGroup: 54321
+      serviceName: oracle19c
+      serviceAccountName: oracle-sa
+      serviceAccount: oracle-sa
+      volumes:
+        - name: oracle-19c
+          persistentVolumeClaim:
+            claimName: oracle-19c
